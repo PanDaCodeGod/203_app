@@ -2,5 +2,5 @@
 import http from './http.js'
 
 export const vueExt = (vue) => {
-	vue.prototype.$http = http;
+	vue.prototype.$myhttp = http;
 }

@@ -6,7 +6,7 @@ import {
 Vue.config.productionTip = false
 
 // 对vue进行拓展
-vueExt();
+vueExt(Vue);
 
 App.mpType = 'app'
 const app = new Vue({

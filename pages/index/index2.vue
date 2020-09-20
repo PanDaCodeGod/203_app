@@ -1,58 +1,125 @@
 <template>
 	<view class="page-container">
-		<uni-card is-shadow v-for="(item,index) in items" :extra="item.name" :title="item.date" :key="index">
-			消费了￥{{item.money}}元,用于: {{item.note}}
-		</uni-card>
+		<view>
+			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.date" :key="index" @click="deleteThis(item._id)">
+				[头像]:我消费了￥{{item.money}}元,用于123: {{item.note}}
+			</uni-card>
+		</view>
+
 		<!-- 悬浮按钮 -->
 		<uni-fab :horizontal="'right'" :vertical="'bottom'" @fabClick="open" :popMenu="false"></uni-fab>
-		<!-- 弹出框 -->
-		<uni-popup ref="popup" class="popup-container" center>
+		<!-- 添加流水弹出框 -->
+		<uni-popup ref="popup" type="dialog" class="popup-container" center>
 			<view class="form">
-				<!-- @submit="formSubmit" -->
 				<form>
 					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="number" name="input" placeholder="金额" />
+						<input class="uni-input" type="number" v-model="bill.money" name="input" placeholder="金额" />
 					</view>
 					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="text" name="input" placeholder="事项" />
+						<input class="uni-input" type="text" name="input" v-model="bill.note" placeholder="事项" />
 					</view>
-
 					<view class="uni-btn-v">
-						<!-- form-type="submit" -->
-						<button>添加</button>
+						<button @click="sumbit">确认</button>
 					</view>
 				</form>
+			</view>
+		</uni-popup>
+		<!-- 添加删除确认框 -->
+		<uni-popup ref="popup2" type="dialog" class="popup-container" center>
+			<view class="deleteContainer">
+				<view class="title">
+					确定删除吗?
+				</view>
+				<view class="btn">
+					<button @click="cancleDelete" type="default">取消</button>
+					<button type="warn" @click="deleteOne(id)">确认</button>
+				</view>
 			</view>
 		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import MR from '@/utils/http.js'
 	export default {
 		data() {
 			return {
-				items: []
+				// 流水数据
+				items: [],
+				// 表单数据
+				bill: {},
+				// 删除id
+				id: ""
 			}
 		},
 		mounted() {
-			this.$nextTick(function() {
-				this.getBill();
-			})
+			this.getBill();
 		},
 		methods: {
-			// 弹出框
+			// 添加弹出框
 			open() {
 				this.$refs.popup.open();
 			},
+			// 删除弹出层
+			deleteThis(id) {
+				this.id = id;
+				this.$refs.popup2.open();
+			},
+			cancleDelete() {
+				this.$refs.popup2.close();
+			},
+			// 删除
+			async deleteOne() {
+				try {
+					let data = await this.$myhttp({
+						url: '/bill',
+						method: 'DELETE',
+						data: {
+							id: this.id,
+						},
+					});
+					uni.showToast({
+						title: data.msg
+					});
+					await this.getBill();
+					this.$refs.popup2.close();
+				} catch (err) {
+					uni.showToast({
+						title: '删除失败'
+					})
+				}
+
+			},
 			// 请求账单数据
-			getBill() {
-				var that = this;
-				MR.request('/bill', null, null, function(data) {
-					console.log(data.data);
-					this.items = data.data;
+			async getBill() {
+				let data = await this.$myhttp({
+					url: '/bills'
 				});
+				this.items = data.data;
+			},
+			// 添加流水
+			async sumbit() {
+				try {
+					let data = await this.$myhttp({
+						url: '/bill',
+						method: 'POST',
+						data: this.bill,
+					});
+					uni.showToast({
+						title: data.msg
+					});
+					this.$refs.popup.close();
+					await this.getBill();
+					this.bill = {};
+				} catch (err) {
+					uni.showToast({
+						title: '添加失败'
+					})
+				}
 			}
+		},
+		async onPullDownRefresh() {
+			await this.getBill();
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>
@@ -101,5 +168,24 @@
 			}
 
 		}
+
+		.deleteContainer {
+			box-sizing: border-box;
+			width: 600rpx;
+			border-radius: 15rpx;
+			padding: 20rpx;
+			background-color: rgb(255, 255, 255);
+			text-align: center;
+
+			.title {
+				padding: 80rpx 0;
+			}
+
+			.btn {
+				display: flex;
+				justify-content: space-around;
+			}
+		}
+
 	}
 </style>

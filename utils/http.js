@@ -1,17 +1,23 @@
+// const BASE_URL = 'http://192.168.50.147:203';
 const BASE_URL = 'http://localhost:203';
 export default (options) => {
 	return new Promise((reslove, reject) => {
+		// 从localStorage中取出token
+		const token = localStorage.getItem('token');
+		options.data = { ...options.data,
+			token
+		}
 		uni.request({
 			url: BASE_URL + options.url,
 			method: options.method || 'GET',
-			data: options.data || data,
+			data: options.data || {},
 			success: (res) => {
-				if (res.data.statusCode != 0) {
+				if (res.data.code != 0) {
 					return uni.showToast({
 						title: '数据请求失败'
 					})
-					reslove(res.data.data);
 				}
+				reslove(res.data);
 			},
 			fail: (err) => {
 				uni.showToast({
