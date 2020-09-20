@@ -1,0 +1,60 @@
+{
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			// uni-ui 规则如下配置
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	},
+	"tabBar": {
+		"fontSize": "20px",
+		"color": "rgb(34,34,34)",
+		"selectedColor": "rgb(15,157,88)",
+		"backgroundColor": "rgb(255,255,255)",
+		"list": [{
+			"pagePath": "pages/index/index",
+			"text": "总览"
+		}, {
+			"pagePath": "pages/index/index2",
+			"text": "流水"
+		}, {
+			"pagePath": "pages/index/index3",
+			"text": "结算"
+		}, {
+			"pagePath": "pages/index/index4",
+			"text": "关于"
+		}]
+	},
+	"pages": [{
+		"path": "pages/index/index",
+		"style": {
+			"enablePullDownRefresh": true
+		}
+	}, {
+		"path": "pages/index/index2",
+		"style": {
+			"enablePullDownRefresh": true
+		}
+	}, {
+		"path": "pages/index/index3",
+		"style": {
+			"enablePullDownRefresh": true
+		}
+	}, {
+		"path": "pages/index/index4",
+		"style": {
+			"enablePullDownRefresh": true
+		}
+	}],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "203专用App",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"backgroundColorTop": "#F4F5F6",
+		"backgroundColorBottom": "#F4F5F6",
+		"mp-alipay": {
+			"titleBarColor": "#FFFFFF"
+		}
+	}
+}
