@@ -4,10 +4,8 @@ export default (options) => {
 	return new Promise((reslove, reject) => {
 		// 从localStorage中取出token
 		const token = localStorage.getItem('token');
-		options.data = { ...options.data,
-			token
-		}
 		uni.request({
+			header:{ 'Authorization' : 'Bearer ' + (token||'')},
 			url: BASE_URL + options.url,
 			method: options.method || 'GET',
 			data: options.data || {},

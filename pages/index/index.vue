@@ -29,19 +29,22 @@
 		methods: {
 			async init() {
 				let data = await this.$myhttp({
-					url: '/user/login',
+					url: '/user/register',
 					method: 'POST',
 					data: {
-
 						name: 'ppap',
 						password: 321
 					},
+					
 				});
 				uni.showToast({
-					title: data.msg
-				})
+					title:data.msg
+				});
 				// 登录成功,把token存入客户端
-				localStorage.setItem('token', data.data.token);
+				if(data.data.token){
+					localStorage.setItem('token', data.data.token);
+				}
+				
 			}
 		},
 	}
