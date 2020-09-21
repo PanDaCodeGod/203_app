@@ -25,30 +25,41 @@
 			"text": "关于"
 		}]
 	},
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"enablePullDownRefresh": true
+	"pages": [
+		// tabbar主页
+		{
+			"path": "pages/index/index",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		}, {
+			"path": "pages/index/index2",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		}, {
+			"path": "pages/index/index3",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		}, {
+			"path": "pages/index/index4",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		},
+		//login
+		{
+			"path": "pages/user/login"
+		},
+		// register
+		{
+			"path": "pages/user/register"
 		}
-	}, {
-		"path": "pages/index/index2",
-		"style": {
-			"enablePullDownRefresh": true
-		}
-	}, {
-		"path": "pages/index/index3",
-		"style": {
-			"enablePullDownRefresh": true
-		}
-	}, {
-		"path": "pages/index/index4",
-		"style": {
-			"enablePullDownRefresh": true
-		}
-	}],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "203专用App",
+		"navigationBarTitleText": "203的流水账",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"backgroundColorTop": "#F4F5F6",

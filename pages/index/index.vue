@@ -1,7 +1,7 @@
 <template>
 	<view class="page-container">
 		<uni-card is-shadow v-for="(item,index) in items" :title="item.type" :key="index">
-			总共消费123了￥{{item.money}}元
+			总共消费了￥{{item.money}}元
 		</uni-card>
 	</view>
 </template>
@@ -12,39 +12,26 @@
 			return {
 				// 金钱:
 				items: {
-					year: {
-						type: '年度',
+					total: {
+						type: '总计',
 						money: 999
-					},
-					month: {
-						type: '月度',
-						money: 12
 					}
 				}
 			}
 		},
 		mounted() {
-			this.init();
+			this.getTotalMoney();
 		},
 		methods: {
-			async init() {
+			async getTotalMoney() {
 				let data = await this.$myhttp({
-					url: '/user/register',
-					method: 'POST',
-					data: {
-						name: 'ppap',
-						password: 321
-					},
-					
+					url: '/totalmoney',
 				});
-				uni.showToast({
-					title:data.msg
-				});
-				// 登录成功,把token存入客户端
-				if(data.data.token){
-					localStorage.setItem('token', data.data.token);
-				}
-				
+				this.items.total.money = data.data.money || 0;
+			},
+			onPullDownRefresh() {
+				this.getTotalMoney();
+				uni.stopPullDownRefresh();
 			}
 		},
 	}

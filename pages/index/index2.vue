@@ -1,8 +1,9 @@
 <template>
 	<view class="page-container">
 		<view>
-			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.date" :key="index" @click="deleteThis(item._id)">
-				[头像]:我消费了￥{{item.money}}元,用于123: {{item.note}}
+			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.date | dateFilter" :key="index"
+			 @click="deleteThis(item._id)">
+				消费了￥{{item.money}}元,用于: {{item.note}}
 			</uni-card>
 		</view>
 
@@ -13,10 +14,10 @@
 			<view class="form">
 				<form>
 					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="number" v-model="bill.money" name="input" placeholder="金额" />
+						<input class="uni-input" type="text" name="input" v-model="bill.note" placeholder="事项" />
 					</view>
 					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="text" name="input" v-model="bill.note" placeholder="事项" />
+						<input class="uni-input" type="number" v-model="bill.money" name="input" placeholder="金额" />
 					</view>
 					<view class="uni-btn-v">
 						<button @click="sumbit">确认</button>
@@ -46,7 +47,10 @@
 				// 流水数据
 				items: [],
 				// 表单数据
-				bill: {},
+				bill: {
+					money: 0,
+					note: 0
+				},
 				// 删除id
 				id: ""
 			}
@@ -57,6 +61,10 @@
 		methods: {
 			// 添加弹出框
 			open() {
+				this.bill = {
+					money: '',
+					note: ''
+				};
 				this.$refs.popup.open();
 			},
 			// 删除弹出层
@@ -95,6 +103,7 @@
 					url: '/bills'
 				});
 				this.items = data.data;
+				return data;
 			},
 			// 添加流水
 			async sumbit() {
@@ -109,7 +118,6 @@
 					});
 					this.$refs.popup.close();
 					await this.getBill();
-					this.bill = {};
 				} catch (err) {
 					uni.showToast({
 						title: '添加失败'
@@ -117,8 +125,9 @@
 				}
 			}
 		},
-		async onPullDownRefresh() {
-			await this.getBill();
+		onPullDownRefresh() {
+			const data = this.getBill();
+
 			uni.stopPullDownRefresh();
 		}
 	}

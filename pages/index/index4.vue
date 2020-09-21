@@ -1,6 +1,6 @@
 <template>
 	<view class="page-container">
-		<text>关于页面,施工中</text>
+		<text>我的的&关于页面,loading</text>
 	</view>
 </template>
 
