@@ -35,7 +35,6 @@
 					method: 'POST',
 					data: this.user
 				});
-				console.log(data)
 				if (data.msg === '用户不存在') {
 					uni.showToast({
 						title: data.msg

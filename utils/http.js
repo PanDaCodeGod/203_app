@@ -1,7 +1,7 @@
-const BASE_URL = 'http://192.168.50.147:203';
+// const BASE_URL = 'http://192.168.50.147:203';
 // const BASE_URL = 'http://192.168.50.220:203';
 // const BASE_URL = 'http://localhost:203';
-// const BASE_URL = 'http://101.200.220.169:203/';
+const BASE_URL = 'http://101.200.220.169:203';
 export default (options) => {
 	return new Promise((reslove, reject) => {
 		// 从localStorage中取出token
@@ -14,8 +14,6 @@ export default (options) => {
 			method: options.method || 'GET',
 			data: options.data || {},
 			success: (res) => {
-
-
 				if (res.data.node_coode == -1) {
 					uni.showToast({
 						title: '请重新登录'
@@ -30,6 +28,7 @@ export default (options) => {
 						title: '数据请求失败'
 					})
 				}
+				console.log(res.data);
 				reslove(res.data);
 			},
 			fail: (err) => {

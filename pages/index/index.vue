@@ -14,7 +14,7 @@
 				items: {
 					total: {
 						type: '总计',
-						money: 999
+						money: 0
 					}
 				}
 			}
@@ -27,7 +27,8 @@
 				let data = await this.$myhttp({
 					url: '/totalmoney',
 				});
-				this.items.total.money = data.data.money || 0;
+				
+				this.items.total.money = data.data || 0;
 			},
 			onPullDownRefresh() {
 				this.getTotalMoney();

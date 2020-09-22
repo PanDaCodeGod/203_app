@@ -1,8 +1,8 @@
 <template>
 	<view class="page-container">
 		<view>
-			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.date | dateFilter" :key="index"
-			 @click="deleteThis(item._id)">
+			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.createtime | dateFilter" :key="index"
+			 @click="deleteThis(item.id)">
 				消费了￥{{item.money}}元,用于: {{item.note}}
 			</uni-card>
 		</view>
@@ -62,8 +62,7 @@
 			// 添加弹出框
 			open() {
 				this.bill = {
-					money: '',
-					note: ''
+
 				};
 				this.$refs.popup.open();
 			},
