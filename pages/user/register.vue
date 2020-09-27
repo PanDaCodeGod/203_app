@@ -1,22 +1,30 @@
 <template>
 	<view class="page-container">
-		<view class="input-container">
-			<view class="row">
-				<text>账号:</text><input maxlength="7" type="text" v-model="user.name" />
+		<view class="container">
+			<u-toast ref="uToast" />
+			<u-form :model="user" ref="uForm">
+				<u-form-item prop="name">
+					<u-field :border-bottom="false" label="用户名" v-model="user.name" required placeholder="请填写用户名">
+					</u-field>
+				</u-form-item>
+				<u-form-item prop="password">
+					<u-field :border-bottom="false" type="password" label="密码" v-model="user.password" required placeholder="请填写密码">
+					</u-field>
+				</u-form-item>
+				<u-form-item prop="password">
+					<u-field :border-bottom="false" type="password" label="确认密码" v-model="user.repassword" required placeholder="请确认密码">
+					</u-field>
+				</u-form-item>
+				<u-form-item prop="code">
+					<u-field :border-bottom="false" label="注册码" v-model="user.code" required placeholder="请联系管理员索要">
+					</u-field>
+				</u-form-item>
+			</u-form>
+
+			<view class="btn-group">
+				<u-button :ripple="true" @click="validete" type="primary">注册</u-button>
+				<u-button :ripple="true" @click="login" type="success">登录</u-button>
 			</view>
-			<view class="row">
-				<text>密码:</text><input maxlength="10" type="text" v-model="user.password" />
-			</view>
-			<view class="row">
-				<text>确认密码:</text><input type="text" v-model="user.repassword" />
-			</view>
-			<view class="row">
-				<text>邀请码:</text><input type="text" v-model="user.code" />
-			</view>
-			<text>{{msg}}</text>
-			<button type="default" @click="validate">注册</button>
-			
-			<button type="default" @click="login">登录</button>
 		</view>
 	</view>
 </template>
@@ -31,25 +39,39 @@
 					repassword: '',
 					code: ''
 				},
-				msg: '',
-				isen: true
+				rules: {
+					name: [{
+						required: true,
+						message: '请输入用户名',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['blur'],
+					}],
+					password: [{
+						required: true,
+						message: '请输入密码',
+						trigger: 'blur'
+					}],
+					repassword: [{
+						required: true,
+						message: '请确认密码',
+						trigger: 'blur'
+					}],
+					code: [{
+						required: true,
+						message: '请请入注册码',
+						trigger: 'blur'
+					}]
+				}
 			}
 		},
 		methods: {
+			showToast(msg) {
+				this.$refs.uToast.show(msg);
+			},
 			login() {
 				uni.redirectTo({
 					url: '/pages/user/login'
 				});
-			},
-			validate() {
-				if (this.user.password != this.user.repassword || this.user.name.length == 0 || this.user.password.length == 0) {
-					this.msg = "检查输入项";
-					this.isen = true;
-				} else {
-					this.msg = '';
-					this.isen = false;
-					this.submit();
-				}
 			},
 			async submit() {
 				const data = await this.$myhttp({
@@ -57,36 +79,38 @@
 					method: 'POST',
 					data: this.user
 				});
-				console.log(data);
-				uni.showToast({
-					title: data.msg
-				})
+				this.showToast({
+					title: data.msg,
+					type: 'error'
+				});
+			},
+			validete() {
+				this.$refs.uForm.validate(valid => {
+					if (valid) {
+						this.submit();
+					} else {
+						return false;
+					}
+				});
 			}
+		},
+		onReady() {
+			this.$refs.uForm.setRules(this.rules);
 		}
-
 	}
 </script>
 
 <style lang="scss" scoped>
 	.page-container {
-		.row {
-			padding: 20px 0;
-			display: flex;
-			justify-content: space-around;
-
-			text {
-				width: 30%;
-				font-size: 30rpx;
-			}
-
-			input {
-				width: 70%;
-				border: 1px solid gray;
-			}
+		.container {
+			border: 1px solid #DDDDDD;
+			border-radius: 10rpx;
+			padding: 10px;
 		}
 
-		button {
-			margin: 20rpx 0;
+		.btn-group {
+			margin-top: 40rpx;
+			display: flex;
 		}
 	}
 </style>

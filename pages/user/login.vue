@@ -1,18 +1,25 @@
 <template>
 	<view class="page-container">
-		<view class="input-container">
-			<view class="row">
-				<text>账号:</text><input type="text" v-model="user.name" />
+		<view class="container">
+			<u-toast ref="uToast" />
+			<u-form :model="user" ref="uForm">
+				<u-form-item prop="name">
+					<u-field :border-bottom="false" label="用户名" v-model="user.name" required placeholder="请填写用户名">
+					</u-field>
+				</u-form-item>
+				<u-form-item prop="password">
+					<u-field :border-bottom="false" type="password" label="密码" v-model="user.password" required placeholder="请填写密码"> </u-field>
+				</u-form-item>
+			</u-form>
+
+			<view class="btn-group">
+				<u-button :ripple="true" @click="validete" type="primary">登录</u-button>
+				<u-button :ripple="true" @click="register" type="success">注册</u-button>
 			</view>
-			<view class="row">
-				<text>密码:</text><input type="password" v-model="user.password" />
-			</view>
-			<button type="default" @click="login">登录</button>
-			<button type="default" @click="register">注册</button>
 		</view>
 	</view>
-</template>
 
+</template>
 <script>
 	export default {
 		data() {
@@ -20,10 +27,26 @@
 				user: {
 					name: '',
 					password: ''
+				},
+				rules: {
+					name: [{
+						required: true,
+						message: '请输入用户名',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['blur'],
+					}],
+					password: [{
+						required: true,
+						message: '请输入密码',
+						trigger: 'blur'
+					}]
 				}
 			}
 		},
 		methods: {
+			showToast(msg) {
+				this.$refs.uToast.show(msg);
+			},
 			register() {
 				uni.redirectTo({
 					url: '/pages/user/register'
@@ -35,46 +58,46 @@
 					method: 'POST',
 					data: this.user
 				});
-				if (data.msg === '用户不存在') {
-					uni.showToast({
-						title: data.msg
-					})
-				} else if (data.msg === '密码错误') {
-					uni.showToast({
-						title: data.msg
-					})
+				if (!Object.keys(data.data).length) {
+					this.showToast({
+						title: data.msg,
+						type: 'error'
+					});
 				} else {
 					uni.setStorageSync('token', data.data.token);
-
+					uni.setStorageSync('user', this.user.name);
 					uni.switchTab({
 						url: '/pages/index/index'
 					});
 				}
+			},
+			validete() {
+				this.$refs.uForm.validate(valid => {
+					if (valid) {
+						this.login();
+					} else {
+						return false;
+					}
+				});
 			}
+		},
+		onReady() {
+			this.$refs.uForm.setRules(this.rules);
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	.page-container {
-		.row {
-			padding: 20px 0;
-			display: flex;
-			justify-content: space-around;
-
-			text {
-				width: 30%;
-				font-size: 30rpx;
-			}
-
-			input {
-				width: 70%;
-				border: 1px solid gray;
-			}
+		.container {
+			border: 1px solid #DDDDDD;
+			border-radius: 10rpx;
+			padding: 10px;
 		}
 
-		button {
-			margin: 20rpx 0;
+		.btn-group {
+			margin-top: 40rpx;
+			display: flex;
 		}
 	}
 </style>

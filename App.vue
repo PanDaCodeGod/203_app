@@ -1,7 +1,41 @@
 <script>
+	import config from '@/config.js';
+
 	export default {
 		onLaunch: function() {
-			console.log('app启动了')
+			// #ifdef APP-PLUS 
+			// 热更新检测代码
+			plus.runtime.getProperty(plus.runtime.appid, function(widgetInfo) {
+				uni.request({
+					url: config.BASE_URL + '/app/update',
+					data: {
+						version: widgetInfo.version,
+						name: widgetInfo.name
+					},
+					success: (result) => {
+						var data = result.data;
+						if (data.update && data.wgtUrl) {
+							uni.downloadFile({
+								url: data.wgtUrl,
+								success: (downloadResult) => {
+									if (downloadResult.statusCode === 200) {
+										plus.runtime.install(downloadResult.tempFilePath, {
+											force: false
+										}, function() {
+											console.log('install success...');
+											plus.runtime.restart();
+										}, function(e) {
+											console.log(e);
+											console.error('install fail...');
+										});
+									}
+								}
+							});
+						}
+					}
+				});
+			});
+			// #endif
 		},
 		onShow: function() {
 			console.log('app显示了')
@@ -12,9 +46,9 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/* 引入通用样式 */
 	@import url("@/static/css/common.css");
-	/* 引入字体图标 */
-	/* @import url("@/static/font/iconfont.css"); */
+	
+	@import "uview-ui/index.scss";
 </style>

@@ -1,42 +1,41 @@
 <template>
 	<view class="page-container">
-		<view>
-			<uni-card is-shadow v-for=" (item,index) in items" :extra="item.name" :title="item.createtime | dateFilter" :key="index"
-			 @click="deleteThis(item.id)">
-				消费了￥{{item.money}}元,用于: {{item.note}}
-			</uni-card>
-		</view>
+		<view class="container">
+			<u-toast ref="uToast" />
+			<u-modal v-model="deleteshow" @confirm="deleteConfirm" :show-title="false" :show-cancel-button="true" :content="'确定删除该条记录?'"></u-modal>
+			<view class="nav-bar">
+				<u-button type="primary" @click="openaddBill">添加流水</u-button>
+			</view>
+			<view class="bill-container">
+				<u-card v-for="(item,index) in items" :key="index" :title="item.name" :title-color="'#2979FF'" :sub-title="item.createtime|dateFilter">
+					<view class="note-money" slot="body">
+						<text class="note">{{item.note}}</text>
+						<text class="money">{{item.money}}元</text>
+					</view>
+					<view slot="foot" class="coazuo">
+						<u-button class="btn" type="error" size="mini" @click="deleteItem(item)">删除</u-button>
+					</view>
+				</u-card>
+			</view>
 
-		<!-- 悬浮按钮 -->
-		<uni-fab :horizontal="'right'" :vertical="'bottom'" @fabClick="open" :popMenu="false"></uni-fab>
-		<!-- 添加流水弹出框 -->
-		<uni-popup ref="popup" type="dialog" class="popup-container" center>
-			<view class="form">
-				<form>
-					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="text" name="input" v-model="bill.note" placeholder="事项" />
-					</view>
-					<view class="uni-form-item uni-column">
-						<input class="uni-input" type="number" v-model="bill.money" name="input" placeholder="金额" />
-					</view>
-					<view class="uni-btn-v">
-						<button @click="sumbit">确认</button>
-					</view>
-				</form>
-			</view>
-		</uni-popup>
-		<!-- 添加删除确认框 -->
-		<uni-popup ref="popup2" type="dialog" class="popup-container" center>
-			<view class="deleteContainer">
-				<view class="title">
-					确定删除吗?
+
+			<!-- 添加弹出窗口 -->
+			<u-popup v-model="show" mode="bottom">
+				<view class="popup" ref="billpopup">
+					<u-form :model="bill" ref="billForm">
+						<u-form-item prop="money">
+							<u-field :border-bottom="false" type="number" label="花费" v-model="bill.money" required placeholder="金额">
+							</u-field>
+						</u-form-item>
+						<u-form-item prop="note">
+							<u-field :border-bottom="false" label="事项" v-model="bill.note" required placeholder="花钱搞了个啥">
+							</u-field>
+						</u-form-item>
+					</u-form>
+					<u-button class="btn" @click="validete" type="success">提交</u-button>
 				</view>
-				<view class="btn">
-					<button @click="cancleDelete" type="default">取消</button>
-					<button type="warn" @click="deleteOne(id)">确认</button>
-				</view>
-			</view>
-		</uni-popup>
+			</u-popup>
+		</view>
 	</view>
 </template>
 
@@ -44,54 +43,72 @@
 	export default {
 		data() {
 			return {
+				// 添加弹出窗口
+				show: false,
+				// 删除确认
+				deleteshow: false,
 				// 流水数据
 				items: [],
 				// 表单数据
 				bill: {
-					money: 0,
-					note: 0
+					money: '',
+					note: ''
 				},
-				// 删除id
-				id: ""
+				// 规则
+				rules: {
+					money: [{
+						required: true,
+						message: '请输入金额',
+						trigger: ['blur'],
+					}],
+					note: [{
+						required: true,
+						message: '请输入消费事项',
+						trigger: 'blur'
+					}]
+				},
+				// 删除的流水数据载体
+				item: {}
 			}
 		},
 		mounted() {
 			this.getBill();
 		},
 		methods: {
-			// 添加弹出框
-			open() {
-				this.bill = {
-
-				};
-				this.$refs.popup.open();
+			showToast(msg) {
+				this.$refs.uToast.show(msg);
 			},
 			// 删除弹出层
-			deleteThis(id) {
-				this.id = id;
-				this.$refs.popup2.open();
-			},
-			cancleDelete() {
-				this.$refs.popup2.close();
+			deleteItem(item) {
+				// 提示是否删除
+				this.deleteshow = true;
+				this.item = item;
+				deleteConfirm(this.item)
 			},
 			// 删除
-			async deleteOne() {
+			async deleteConfirm(item) {
+				if (this.item.name != uni.getStorageSync('user')) {
+					return this.showToast({
+						title: '你没有权限删除他人的数据',
+						type: 'warning  '
+					});
+				}
 				try {
 					let data = await this.$myhttp({
 						url: '/bill',
 						method: 'DELETE',
 						data: {
-							id: this.id,
+							id: this.item.id,
 						},
 					});
-					uni.showToast({
-						title: data.msg
+					this.showToast({
+						title: data.msg,
 					});
 					await this.getBill();
-					this.$refs.popup2.close();
 				} catch (err) {
 					uni.showToast({
-						title: '删除失败'
+						title: '删除失败',
+						type: 'warning  '
 					})
 				}
 
@@ -104,6 +121,25 @@
 				this.items = data.data;
 				return data;
 			},
+			// 展开添加流水菜单
+			openaddBill() {
+				this.show = true;
+				this.$nextTick(function() {
+					this.$refs.billForm.setRules(this.rules);
+				})
+			},
+			// 验证表单数据
+			validete() {
+				this.$refs.billForm.validate(valid => {
+					if (valid) {
+						this.sumbit();
+						this.show = false;
+						this.bill = {}
+					} else {
+						return false;
+					}
+				});
+			},
 			// 添加流水
 			async sumbit() {
 				try {
@@ -112,88 +148,72 @@
 						method: 'POST',
 						data: this.bill,
 					});
-					uni.showToast({
-						title: data.msg
+					this.showToast({
+						title: data.msg,
+						type: 'primary '
 					});
-					this.$refs.popup.close();
 					await this.getBill();
 				} catch (err) {
-					uni.showToast({
-						title: '添加失败'
-					})
+					this.showToast({
+						title: '添加失败',
+						type: 'error '
+					});
 				}
 			}
 		},
 		onPullDownRefresh() {
 			const data = this.getBill();
-
+			this.showToast({
+				title: '刷新成功',
+				type: 'primary '
+			});
 			uni.stopPullDownRefresh();
-		}
+		},
+
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.page-container {
-		.add {
-			text-align: center;
+		.container {
+			.nav-bar {
+				overflow: hidden;
+				margin-bottom: 50rpx;
+			}
 
-			.add-btn {
-				width: 80%;
-				color: rgb(255, 255, 255);
+			.bill-container {
+				overflow: hidden;
+
+				.note-money {
+					display: flex;
+					justify-content: space-between;
+
+					.money {
+						color: red;
+						font-size: 40rpx;
+					}
+				}
+
+				.coazuo {
+					display: flex;
+					justify-content: flex-end;
+
+					.btn {
+						margin: 0;
+					}
+				}
 			}
 		}
 	}
 
-	.popup-container {
-		width: 100%;
-		text-align: center;
-
-		.form {
-			box-sizing: border-box;
-			width: 600rpx;
-			border-radius: 15rpx;
-			padding: 20rpx;
-			background-color: rgb(255, 255, 255);
-			text-align: center;
-
-			.uni-form-item {
-				margin: 10px 0;
-				border: 1px solid #e0e0e0;
-				border-radius: 10rpx;
-
-				.uni-input {
-					height: 66rpx;
-				}
-			}
-
-			.uni-btn-v {
-				margin: 15rpx auto;
-				width: 50%;
-
-				button {
-					margin: 20rpx 0;
-				}
-			}
-
+	.popup {
+		width: 90%;
+		padding: 50rpx 10rpx;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		.btn{
+			margin-top: 50rpx;
 		}
-
-		.deleteContainer {
-			box-sizing: border-box;
-			width: 600rpx;
-			border-radius: 15rpx;
-			padding: 20rpx;
-			background-color: rgb(255, 255, 255);
-			text-align: center;
-
-			.title {
-				padding: 80rpx 0;
-			}
-
-			.btn {
-				display: flex;
-				justify-content: space-around;
-			}
-		}
-
 	}
 </style>

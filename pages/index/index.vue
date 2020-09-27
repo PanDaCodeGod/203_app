@@ -1,8 +1,20 @@
 <template>
 	<view class="page-container">
-		<uni-card is-shadow v-for="(item,index) in items" :title="item.type" :key="index">
-			总共消费了￥{{item.money}}元
-		</uni-card>
+		<view class="container">
+			<u-toast ref="uToast" />
+			<u-table>
+				<u-tr>
+					<u-th>#</u-th>
+					<u-th>消费</u-th>
+					<u-th>note</u-th>
+				</u-tr>
+				<u-tr>
+					<u-td>{{item.type}}</u-td>
+					<u-td>￥{{item.money}}</u-td>
+					<u-td>所有消费</u-td>
+				</u-tr>
+			</u-table>
+		</view>
 	</view>
 </template>
 
@@ -10,12 +22,9 @@
 	export default {
 		data() {
 			return {
-				// 金钱:
-				items: {
-					total: {
-						type: '总计',
-						money: 0
-					}
+				item: {
+					type: '总计',
+					money: 0
 				}
 			}
 		},
@@ -23,21 +32,27 @@
 			this.getTotalMoney();
 		},
 		methods: {
+			showToast(msg) {
+				this.$refs.uToast.show(msg);
+			},
 			async getTotalMoney() {
 				let data = await this.$myhttp({
 					url: '/totalmoney',
 				});
-				
-				this.items.total.money = data.data || 0;
+				this.item.money = data.data;
 			},
 			onPullDownRefresh() {
 				this.getTotalMoney();
+				this.showToast({
+					title: '刷新成功',
+					type: 'primary '
+				});
 				uni.stopPullDownRefresh();
 			}
 		},
 	}
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+	.page-container {}
 </style>

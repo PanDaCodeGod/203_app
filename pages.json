@@ -3,7 +3,7 @@
 		"autoscan": true,
 		"custom": {
 			// uni-ui 规则如下配置
-			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+			"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 		}
 	},
 	"tabBar": {
@@ -11,18 +11,29 @@
 		"color": "rgb(34,34,34)",
 		"selectedColor": "rgb(15,157,88)",
 		"backgroundColor": "rgb(255,255,255)",
+		"fontSize": "10px",
+		"iconWidth": "24px",
+		"height": "65px",
 		"list": [{
 			"pagePath": "pages/index/index",
-			"text": "总览"
+			"text": "主页",
+			"selectedIconPath": "static/icon/homeselect.png",
+			"iconPath": "static/icon/home.png"
 		}, {
 			"pagePath": "pages/index/index2",
-			"text": "流水"
+			"text": "流水",
+			"selectedIconPath": "static/icon/liushuislect.png",
+			"iconPath": "static/icon/liushui.png"
 		}, {
 			"pagePath": "pages/index/index3",
-			"text": "结算"
+			"text": "结算",
+			"selectedIconPath": "static/icon/cwslect.png",
+			"iconPath": "static/icon/cw.png"
 		}, {
 			"pagePath": "pages/index/index4",
-			"text": "关于"
+			"text": "关于",
+			"selectedIconPath": "static/icon/grzxslect.png",
+			"iconPath": "static/icon/grzx.png"
 		}]
 	},
 	"pages": [
@@ -40,12 +51,12 @@
 		}, {
 			"path": "pages/index/index3",
 			"style": {
-				"enablePullDownRefresh": true
+				// "enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/index/index4",
 			"style": {
-				"enablePullDownRefresh": true
+				// "enablePullDownRefresh": true
 			}
 		},
 		//login

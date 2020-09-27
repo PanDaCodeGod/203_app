@@ -1,7 +1,5 @@
-// const BASE_URL = 'http://192.168.50.147:203';
-// const BASE_URL = 'http://192.168.50.220:203';
-// const BASE_URL = 'http://localhost:203';
-const BASE_URL = 'http://101.200.220.169:203';
+import config from '@/config.js';
+
 export default (options) => {
 	return new Promise((reslove, reject) => {
 		// 从localStorage中取出token
@@ -10,7 +8,7 @@ export default (options) => {
 			header: {
 				'Authorization': 'Bearer ' + token
 			},
-			url: BASE_URL + options.url,
+			url: config.BASE_URL + options.url,
 			method: options.method || 'GET',
 			data: options.data || {},
 			success: (res) => {
