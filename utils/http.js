@@ -1,16 +1,21 @@
 import config from '@/config.js';
 
+
 export default (options) => {
 	return new Promise((reslove, reject) => {
 		// 从localStorage中取出token
 		let token = uni.getStorageSync('token');
+		const username = uni.getStorageSync('user');
 		uni.request({
 			header: {
 				'Authorization': 'Bearer ' + token
 			},
 			url: config.BASE_URL + options.url,
 			method: options.method || 'GET',
-			data: options.data || {},
+			data: {
+				...options.data,
+				username
+			},
 			success: (res) => {
 				if (res.data.node_coode == -1) {
 					uni.showToast({

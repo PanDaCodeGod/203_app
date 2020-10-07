@@ -4,10 +4,15 @@
 			<u-toast ref="uToast" />
 			<u-modal v-model="deleteshow" @confirm="deleteConfirm" :show-title="false" :show-cancel-button="true" :content="'确定删除该条记录?'"></u-modal>
 			<view class="nav-bar">
-				<u-button type="primary" @click="openaddBill">添加流水</u-button>
+				<u-sticky>
+					<view class="sticky">
+						<u-button type="primary" @click="openaddBill">添加流水</u-button>
+					</view>
+				</u-sticky>
 			</view>
 			<view class="bill-container">
-				<u-card v-for="(item,index) in items" :key="index" :title="item.name" :title-color="'#2979FF'" :sub-title="item.createtime|dateFilter">
+				<u-card @click="jiesuan_show=true" v-for="(item,index) in items" :key="index" :title="item.name" :title-color="'#2979FF'"
+				 :sub-title="item.createtime|dateFilter">
 					<view class="note-money" slot="body">
 						<text class="note">{{item.note}}</text>
 						<text class="money">{{item.money}}元</text>
@@ -17,12 +22,10 @@
 					</view>
 				</u-card>
 			</view>
-
-
 			<!-- 添加弹出窗口 -->
 			<u-popup v-model="show" mode="bottom">
 				<view class="popup" ref="billpopup">
-					<u-form :model="bill" ref="billForm">
+					<u-form class="billForm" :model="bill" ref="billForm">
 						<u-form-item prop="money">
 							<u-field :border-bottom="false" type="number" label="花费" v-model="bill.money" required placeholder="金额">
 							</u-field>
@@ -31,8 +34,16 @@
 							<u-field :border-bottom="false" label="事项" v-model="bill.note" required placeholder="花钱搞了个啥">
 							</u-field>
 						</u-form-item>
+						<!-- <u-upload :action="action" :file-list="fileList" :upload-text="'上传凭证'"></u-upload> -->
 					</u-form>
 					<u-button class="btn" @click="validete" type="success">提交</u-button>
+				</view>
+			</u-popup>
+			<!-- 结算弹出窗口 -->
+			<u-popup v-model="jiesuan_show" mode="bottom">
+				<view class="popup" ref="jiesuanpopup">
+
+					<u-button class="btn" @click="validete" type="success">结算</u-button>
 				</view>
 			</u-popup>
 		</view>
@@ -43,6 +54,8 @@
 	export default {
 		data() {
 			return {
+				// 结算弹出窗口
+				jiesuan_show: false,
 				// 添加弹出窗口
 				show: false,
 				// 删除确认
@@ -78,16 +91,18 @@
 			showToast(msg) {
 				this.$refs.uToast.show(msg);
 			},
+			billClick() {
+				console.log(1)
+			},
 			// 删除弹出层
 			deleteItem(item) {
 				// 提示是否删除
 				this.deleteshow = true;
 				this.item = item;
-				deleteConfirm(this.item)
 			},
 			// 删除
 			async deleteConfirm(item) {
-				if (this.item.name != uni.getStorageSync('user')) {
+				if (this.item.name != uni.getStorageSync('user').name) {
 					return this.showToast({
 						title: '你没有权限删除他人的数据',
 						type: 'warning  '
@@ -212,8 +227,15 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		.btn{
+
+		.billForm {
+			padding: 0 20rpx;
+		}
+
+		.btn {
 			margin-top: 50rpx;
+			align-self: center;
+			align-items: center;
 		}
 	}
 </style>

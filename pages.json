@@ -4,6 +4,7 @@
 		"custom": {
 			// uni-ui 规则如下配置
 			"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	
 		}
 	},
 	"tabBar": {
