@@ -1,7 +1,6 @@
 <script>
 	import config from '@/config.js';
 	export default {
-		
 		onLaunch: function() {
 			// #ifdef APP-PLUS 
 			// 热更新检测代码
@@ -25,7 +24,6 @@
 											force: false
 										}, function() {
 											console.log('install success...');
-											uni.clearStorageSync()
 											plus.runtime.restart();
 										}, function(e) {
 											console.log(e);

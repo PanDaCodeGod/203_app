@@ -52,7 +52,7 @@
 		}, {
 			"path": "pages/index/index3",
 			"style": {
-				// "enablePullDownRefresh": true
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/index/index4",
