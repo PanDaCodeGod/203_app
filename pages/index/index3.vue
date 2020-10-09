@@ -11,7 +11,7 @@
 				</view>
 				<view slot="foot">
 					<view class="card-foot">
-						<u-button type="primary" @click="payhanlder(item)">立即支付</u-button>
+						<u-button :disabled="item.data.length==0" type="primary" @click="payhanlder(item)">立即支付</u-button>
 					</view>
 				</view>
 			</u-card>
@@ -27,7 +27,7 @@
 				</view>
 				<view slot="foot">
 					<view class="card-foot">
-						<u-button type="primary">立即报警</u-button>
+						<u-button type="primary">立即催收</u-button>
 					</view>
 				</view>
 			</u-card>
@@ -40,7 +40,7 @@
 			return {
 				// 当前用户名
 				username: '',
-				// 当前用户已经计算的流水集合
+				// 当前用户位计算的流水集合,及其附属信息
 				user_bills: [],
 			}
 		},
@@ -87,8 +87,11 @@
 					method: 'post',
 					data:item
 				});
-
-				console.log(data);
+				this.getJisuanBill();
+				this.showToast({
+					title: data.msg,
+					type: 'primary '
+				});
 			}
 		}
 	}
