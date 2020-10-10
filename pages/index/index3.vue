@@ -11,7 +11,7 @@
 				</view>
 				<view slot="foot">
 					<view class="card-foot">
-						<u-button :disabled="item.data.length==0" type="primary" @click="payhanlder(item)">立即支付</u-button>
+						<u-button :disabled="item.data.length==0" type="primary" @click="payhanlder(item)">我已在支付宝或微信支付</u-button>
 					</view>
 				</view>
 			</u-card>
@@ -27,7 +27,6 @@
 				</view>
 				<view slot="foot">
 					<view class="card-foot">
-						<u-button type="primary">立即催收</u-button>
 					</view>
 				</view>
 			</u-card>
@@ -85,7 +84,7 @@
 				let data = await this.$myhttp({
 					url: '/todo',
 					method: 'post',
-					data:item
+					data: item
 				});
 				this.getJisuanBill();
 				this.showToast({

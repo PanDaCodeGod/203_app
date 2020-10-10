@@ -102,7 +102,7 @@
 			},
 			// 删除
 			async deleteConfirm(item) {
-				if (this.item.name != uni.getStorageSync('user').name) {
+				if (this.item.name != uni.getStorageSync('user')) {
 					return this.showToast({
 						title: '你没有权限删除他人的数据',
 						type: 'warning  '

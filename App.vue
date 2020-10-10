@@ -15,6 +15,8 @@
 					},
 					success: (result) => {
 						var data = result.data;
+						console.log(1);
+						console.log(data);
 						if (data.update && data.wgtUrl) {
 							uni.downloadFile({
 								url: data.wgtUrl,
