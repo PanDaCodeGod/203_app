@@ -34,6 +34,13 @@
 							<u-field :border-bottom="false" label="事项" v-model="bill.note" required placeholder="花钱搞了个啥">
 							</u-field>
 						</u-form-item>
+						<u-form-item label="成员">
+							<u-checkbox-group>
+								<u-checkbox @change="checkboxChange" v-model="item.checked" v-for="(item, index) in users" :key="index" :name="item.name">
+									{{ item.name }}
+								</u-checkbox>
+							</u-checkbox-group>
+						</u-form-item>
 						<!-- <u-upload :action="action" :file-list="fileList" :upload-text="'上传凭证'"></u-upload> -->
 					</u-form>
 					<u-button class="btn" @click="validete" type="success">提交</u-button>
@@ -42,7 +49,6 @@
 			<!-- 结算弹出窗口 -->
 			<u-popup v-model="jiesuan_show" mode="bottom">
 				<view class="popup" ref="jiesuanpopup">
-
 					<u-button class="btn" @click="validete" type="success">结算</u-button>
 				</view>
 			</u-popup>
@@ -62,10 +68,15 @@
 				deleteshow: false,
 				// 流水数据
 				items: [],
+				// 所有用户
+				users: [],
+
 				// 表单数据
 				bill: {
 					money: '',
-					note: ''
+					note: '',
+					// 本次参与的成员
+					groupUsers: []
 				},
 				// 规则
 				rules: {
@@ -84,10 +95,32 @@
 				item: {}
 			}
 		},
-		mounted() {
+		created() {
 			this.getBill();
+			this.getUsers();
+			console.log(this.users);
 		},
 		methods: {
+			// 获取所有用户
+			async getUsers() {
+				let data = await this.$myhttp({
+					url: '/user/users'
+				});
+				this.users = data.data;
+			},
+			//单击成员框
+			checkboxChange(user) {
+				// console.log(user);
+				if (user.value) {
+					this.bill.groupUsers.push(user.name);
+					// console.log(this.groupUser);
+				} else {
+					let index = this.bill.groupUsers.findIndex(e => e == user.name);
+					this.bill.groupUsers.splice(index, 1);
+					console.log(this.bill.groupUsers);
+				}
+			},
+			// 提示框组件
 			showToast(msg) {
 				this.$refs.uToast.show(msg);
 			},
@@ -147,9 +180,12 @@
 			validete() {
 				this.$refs.billForm.validate(valid => {
 					if (valid) {
+						// 验证成功,进行提交
 						this.sumbit();
+						//参数置空
 						this.show = false;
-						this.bill = {}
+						this.bill = {
+						}
 					} else {
 						return false;
 					}

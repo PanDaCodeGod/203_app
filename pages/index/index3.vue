@@ -6,7 +6,7 @@
 			 :foot-border-top="false">
 				<view slot="body">
 					<view class="card-body">
-						<text>他有<text class="yellow">{{item.data.length}}</text>笔你还没有支付,共计需分摊 <text class="redcolor">{{item.user.inmoney}}</text>元</text>
+						<text>他有<text class="yellow">{{item.data.length}}</text>笔流水你还没有支付,共计需分摊 <text class="redcolor">{{item.user.inmoney}}</text>元</text>
 					</view>
 				</view>
 				<view slot="foot">
@@ -19,7 +19,7 @@
 				<view slot="body">
 					<view class="card-body">
 						<view v-for="(item_1,index) in item.data" :key="index">
-							<text>你有<text class="yellow">{{item_1.bills.length}}</text>笔订单
+							<text>你有<text class="yellow">{{item_1.bills.length}}</text>笔流水
 								<text class="yellow">{{item_1.user.name}}</text>未支付,需要向你支付
 								<text class="redcolor">{{item_1.outmoney}}</text>元</text>
 						</view>

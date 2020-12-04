@@ -18,6 +18,7 @@
 				</view>
 			</u-card>
 		</view>
+
 		<view class="text-center">
 			<view>
 				App端开源项目地址:https://github.com/bbboyvips/203_app
